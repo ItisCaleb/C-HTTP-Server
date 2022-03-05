@@ -10,9 +10,10 @@ This is just a practice project
 - parse request headers
 - parse request data
 - multi thread
-- more HTTP status code
+- ~~more HTTP status code~~
 - route matching
 - HTTPS
+- middleware
 
 ## Example
 ```C

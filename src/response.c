@@ -6,19 +6,81 @@
 #include <time.h>
 
 const int status_code[] = {
+  [Continue] = 100,
+  [Switching_Protocol] = 101,
   [OK] = 200, 
-  [Not_Found] = 404, 
+  [Created] = 201,
+  [Accepted] = 202,
+  [Non_Authoritative_Information] = 203,
+  [No_Content] = 204,
+  [Reset_Content] = 205,
+  [Multiple_Choices] = 300,
+  [Moved_Permanently] = 301,
+  [Found] = 302,
+  [See_Other] = 303,
+  [Not_Modified] = 304,
+  [Use_Proxy] = 305,
+  [Temporary_Redirect] = 307,
   [Bad_Request] = 400, 
+  [Payment_Required] = 402,
+  [Forbidden] = 403,
+  [Not_Found] = 404, 
+  [Method_Not_Allowed] = 405,
+  [Not_Acceptable] = 406,
+  [Request_Timeout] = 408,
+  [Conflict] = 409,
+  [Gone] = 410,
+  [Lenght_Required] = 411,
+  [Payload_Too_Large] = 413,
+  [URI_Too_Long] = 414,
+  [Unsupported_Media_Type] = 415,
+  [Expectation_Failed] = 417,
+  [Upgrade_Required] = 426,
+  [Internal_Server_Error] = 500,
   [Not_Implemented] = 501,
+  [Bad_Gateway] = 502,
+  [Service_Unavailable] = 503,
+  [Gateway_Timeout] = 504,
   [HTTP_Version_Not_Supported] = 505
 };
 
 const char *status[] = {
-    [OK] = "OK", 
-    [Not_Found] = "Not Found", 
-    [Bad_Request] = "Bad Request",
-    [Not_Implemented] = "Not Implemented",
-    [HTTP_Version_Not_Supported] = "HTTP Version Not Supported"
+  [Continue] = "Continue",
+  [Switching_Protocol] = "Switching Protocol",
+  [OK] = "OK", 
+  [Created] = "Created",
+  [Accepted] = "Accepted",
+  [Non_Authoritative_Information] = "Non-Authoritative Information",
+  [No_Content] = "No Content",
+  [Reset_Content] = "Reset Content",
+  [Multiple_Choices] = "Multiple Choices",
+  [Moved_Permanently] = "Moved Permanently",
+  [Found] = "Found",
+  [See_Other] = "See Other",
+  [Not_Modified] = "Not Modified",
+  [Use_Proxy] = "Use Proxy",
+  [Temporary_Redirect] = "Temporary Redirect",
+  [Bad_Request] = "Bad Request", 
+  [Payment_Required] = "Payment Required",
+  [Forbidden] = "Forbidden",
+  [Not_Found] = "Not Found", 
+  [Method_Not_Allowed] = "Method Not Allowed",
+  [Not_Acceptable] = "Not Acceptable",
+  [Request_Timeout] = "Request Timeout",
+  [Conflict] = "Conflict",
+  [Gone] = "Gone",
+  [Lenght_Required] = "Lenght Required",
+  [Payload_Too_Large] = "Payload Too Large",
+  [URI_Too_Long] = "URI Too Long",
+  [Unsupported_Media_Type] = "Unsupported Media Type",
+  [Expectation_Failed] = "Expectation Failed",
+  [Upgrade_Required] = "Upgrade Required",
+  [Internal_Server_Error] = "Internal Server Error",
+  [Not_Implemented] = "Not Implemented",
+  [Bad_Gateway] = "Bad Gateway",
+  [Service_Unavailable] = "Service Unavailable",
+  [Gateway_Timeout] = "Gateway Timeout",
+  [HTTP_Version_Not_Supported] = "HTTP Version Not Supported"
 };
 
 char* get_time_str() {
@@ -38,12 +100,19 @@ void res_set_data(HTTP_Response *res, char *data) {
   res->data_len = strlen(data);
 }
 
+void res_redirect(HTTP_Response* res, char* path){
+  res_set_status(res, Found);
+  set_header(res->headers,"Location",path);
+}
+
+
 void res_set_html(HTTP_Response* res, char* file_path){
   FILE *ptr = fopen(file_path,"r");
   if(!ptr){
     printf("Can't open file at %s\n",file_path);
     return;
   }
+  set_header(res->headers,"Content-Type","text/html; charset=UTF-8");
   fseek(ptr, 0, SEEK_END);
   long fsize = ftell(ptr);
   fseek(ptr, 0, SEEK_SET);  /* same as rewind(f); */
@@ -59,9 +128,11 @@ HTTP_Response *create_response() {
   HTTP_Response *res = calloc(1, sizeof(HTTP_Response));
   res->HTTP_VERSION = 1.1;
   res->headers = create_headers();
+  res->status = OK;
   set_header(res->headers, "Server", "ItisCaleb/1.0");
   set_header(res->headers, "Date", get_time_str());
-  set_header(res->headers, "Connection", "close");
+  set_header(res->headers, "Connection", "keep-alive");
+  set_header(res->headers, "Content-Type","text/plain");
   return res;
 }
 
