@@ -96,6 +96,7 @@ bool parse_headers(HTTP_Request *req, char* buffer, ParseStatus *s){
       return false;
     }
   }
+  free(line);
   set_header(req->headers,name,value);
   return true;
 }
