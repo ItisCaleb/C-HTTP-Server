@@ -1,4 +1,5 @@
 #include <tcpserver.h>
+#include <stdio.h>
 
 int iSetOption = 1;
 

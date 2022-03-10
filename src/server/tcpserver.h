@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 typedef struct TCP_Server{
     int sockfd;

@@ -171,6 +171,10 @@ void concat_data(HTTP_Response *res, char *header_str) {
 }
 
 void free_response(HTTP_Response *res) {
+  if(!res){
+    printf("You can't pass NULL response!");
+    return;
+  }
   hashmap_free(res->headers);
   if(res->data != NULL){
     free(res->data);

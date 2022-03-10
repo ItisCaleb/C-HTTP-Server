@@ -16,4 +16,6 @@ void set_header(struct hashmap* map,char* name,char* value);
 
 HTTP_Header* get_header(struct hashmap* map,char* name);
 
+void list_headers(struct hashmap* map);
+
 #endif

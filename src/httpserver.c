@@ -1,9 +1,8 @@
-#include <headers.h>
 #include <httpserver.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <math.h>
+#include <pthread.h>
 
 
 struct HTTP_Server *create_server(unsigned short port)
@@ -25,21 +24,25 @@ void handle_route(HTTP_Server *server, char *path, Request_Handler handler)
   add_route(server->routes, path, handler);
 }
 
-bool route_iter(const void *item, void *udata) {
-  const HTTP_Route *route = item;
-  printf("%s",route->path);
-  fflush(stdout);
-  return true;
+static void handle_response(HTTP_Server *server,HTTP_Request *req, HTTP_Response *res)
+{
+  char *response = calloc(1, HEADER_MAX_LEN + res->data_len + 1);
+  concat_headers(res, response);
+  concat_data(res, response);
+
+  // send response
+  send_tcp(server->_tcp_server, response, strlen(response));
+
+  // free response
+  free(response);
+  free_response(res);
+
+  //free request
+  free_request(req);
 }
 
-void start(HTTP_Server *server)
-{
-  if (!server)
-  {
-    printf("Error: Your server is NULL\n");
-    exit(0);
-  }
-  start_tcp(server->_tcp_server);
+static void* run_http(void *s){
+  HTTP_Server *server = s;
   for (;;)
   {
     if (accept_tcp(server->_tcp_server))
@@ -56,7 +59,8 @@ void start(HTTP_Server *server)
         if(req->_parse_ok && !execute_handler(server->routes,req->path,req,res)){
           res_set_status(res,Not_Found);
         }
-        handle_response(server, res);
+        fflush(stdout);
+        handle_response(server,req, res);
       }
       shutdown(server->_tcp_server->clientfd, SHUT_RD);
       close(server->_tcp_server->clientfd);
@@ -64,16 +68,18 @@ void start(HTTP_Server *server)
   }
 }
 
-void handle_response(HTTP_Server *server, HTTP_Response *res)
+void start(HTTP_Server *server)
 {
-  char *response = calloc(1, HEADER_MAX_LEN + res->data_len + 1);
-  concat_headers(res, response);
-  concat_data(res, response);
+  if (!server)
+  {
+    printf("Error: Your server is NULL\n");
+    exit(0);
+  }
+  start_tcp(server->_tcp_server);
+  pthread_t t[4]; // 宣告 pthread 變數
+  for(int i=0;i<4;i++){
+    pthread_create(&t[i], NULL, run_http, server);
+  }
+  pthread_join(t[0], NULL);
+}
 
-  // send response
-  send_tcp(server->_tcp_server, response, strlen(response));
-
-  // free response
-  free(response);
-  free_response(res);
-};

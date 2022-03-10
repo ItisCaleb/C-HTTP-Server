@@ -14,6 +14,7 @@ This is just a practice project
 - route matching
 - HTTPS
 - middleware
+- static directory
 
 ## Example
 ```C

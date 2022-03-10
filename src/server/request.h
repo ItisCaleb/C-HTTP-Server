@@ -14,7 +14,7 @@ METHOD(PUT, 3) \
 METHOD(DELETE, 4) \
 METHOD(CONNECT, 5) \
 METHOD(OPTIONS, 6) \
-METHOD(TRACE, 6) \
+METHOD(TRACE, 7) \
 
 
 #define METHOD(name, value) \
@@ -43,5 +43,11 @@ typedef struct HTTP_Request{
 } HTTP_Request;
 
 HTTP_Request *create_request(char* buffer);
+
+HTTP_method req_get_method(HTTP_Request* req);
+
+char* req_get_path(HTTP_Request* req);
+
+void free_request(HTTP_Request *req);
 
 #endif

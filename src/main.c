@@ -1,7 +1,9 @@
 #include <httpserver.h>
+#include <stdio.h>
 
 void root(HTTP_Request* req, HTTP_Response* res){
     res_redirect(res,"/bruh");
+    printf("%s",req->data);
 }
 
 void bruh(HTTP_Request* req, HTTP_Response* res){
