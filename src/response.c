@@ -117,7 +117,7 @@ void res_set_html(HTTP_Response* res, char* file_path){
   long fsize = ftell(ptr);
   fseek(ptr, 0, SEEK_SET);  /* same as rewind(f); */
 
-  char *data = malloc(fsize + 1);
+  char *data = calloc(1,fsize + 1);
   fread(data, fsize, 1, ptr);
   fclose(ptr);
   res_set_data(res,data);

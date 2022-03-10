@@ -21,6 +21,16 @@ void handle_route(HTTP_Server *server, char *path, Request_Handler handler)
     printf("Error: Your server is NULL\n");
     exit(0);
   }
+  if (!path)
+  {
+    printf("Error: Your path is NULL\n");
+    exit(0);
+  }
+  if (!handler)
+  {
+    printf("Error: Your handler is NULL\n");
+    exit(0);
+  }
   add_route(server->routes, path, handler);
 }
 
@@ -62,6 +72,7 @@ static void* run_http(void *s){
         fflush(stdout);
         handle_response(server,req, res);
       }
+      shutdown(server->_tcp_server->clientfd, SHUT_WR);
       shutdown(server->_tcp_server->clientfd, SHUT_RD);
       close(server->_tcp_server->clientfd);
     }
