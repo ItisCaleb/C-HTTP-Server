@@ -7,9 +7,9 @@ This is just a practice project
 - ~~HTTP response~~
 - ~~parse request start-line~~
 - parse path query
-- parse request headers
-- parse request data
-- multi thread
+- ~~parse request headers~~(not sure if there are any bug)
+- ~~parse request data~~
+- ~~multi thread~~(not sure if there are any bug)
 - ~~more HTTP status code~~
 - route matching
 - HTTPS
