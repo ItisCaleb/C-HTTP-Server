@@ -9,7 +9,7 @@ This is just a practice project
 - parse path query
 - ~~parse request headers~~(not sure if there are any bug)
 - ~~parse request data~~
-- ~~multi thread~~(not sure if there are any bug)
+- ~~multi thread~~
 - ~~more HTTP status code~~
 - route matching
 - HTTPS

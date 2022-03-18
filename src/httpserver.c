@@ -76,7 +76,7 @@ static void* handle_request(void* p){
   return NULL;
 }
 
-static void* run_http(void *s){
+static void run_http(void *s){
   HTTP_Server *server = s;
   for (;;)
   {
