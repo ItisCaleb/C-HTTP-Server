@@ -129,10 +129,12 @@ HTTP_Response *create_response() {
   res->HTTP_VERSION = 1.1;
   res->headers = create_headers();
   res->status = OK;
+  char *time_str = get_time_str();
   set_header(res->headers, "Server", "ItisCaleb/1.0");
-  set_header(res->headers, "Date", get_time_str());
+  set_header(res->headers, "Date", time_str);
   set_header(res->headers, "Connection", "keep-alive");
   set_header(res->headers, "Content-Type","text/plain");
+  free(time_str);
   return res;
 }
 

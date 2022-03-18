@@ -1,7 +1,9 @@
 #include <tcpserver.h>
 #include <stdio.h>
+#include <poll.h>
 
 int iSetOption = 1;
+struct timeval timeout = {.tv_sec = 1,.tv_usec=0};
 
 struct TCP_Server* create_tcp_server(unsigned short port){
     TCP_Server *server = calloc(1,sizeof(struct TCP_Server));
@@ -11,14 +13,14 @@ struct TCP_Server* create_tcp_server(unsigned short port){
         printf("Error create socket\n");
         exit(0);
     }
-   
+    server->addrlen = sizeof(struct sockaddr_in);
+
     //init server addr
     server->server_addr = calloc(1,server->addrlen);
     server->server_addr->sin_family = AF_INET;
     server->server_addr->sin_addr.s_addr = htonl(INADDR_ANY);
     server->server_addr->sin_port = htons(port);
 
-    server->addrlen = sizeof(struct sockaddr_in);
 
     if(bind(server->sockfd, (struct sockaddr*)server->server_addr, server->addrlen) == -1){
         printf("Can't bind to port %d\n",port);
@@ -33,26 +35,33 @@ void start_tcp(TCP_Server* server){
         printf("Error: Your TCP server is NULL\n");
         exit(0);
     }
-    listen(server->sockfd, 5);
+    listen(server->sockfd, 10);
 }
 
 int accept_tcp(TCP_Server* server){
-    server->clientfd = accept(server->sockfd, (struct sockaddr*)server->client_addr, &(server->addrlen));
-    if(server->clientfd == -1){
+    int clientfd = accept(server->sockfd, (struct sockaddr*)server->client_addr, &(server->addrlen));
+    if(clientfd == -1){
         printf("Error: INVALID SOCKET\n");
-        return 0;
     }
-    return 1;
+    return clientfd;
 }
 
-int recv_tcp(TCP_Server* server, char* buffer, size_t size){
-    if(recv(server->clientfd, buffer, size, 0)==0){
-        return 0;
+int recv_tcp(int fd, char* buffer, size_t size){
+    struct pollfd p;
+    p.fd = fd;
+    p.events = POLLIN;
+    int ret = poll(&p, 1, 5 * 1000);
+    switch (ret)
+    {
+    case -1:
+    case 0:
+        return ret;   
+    default:
+        return recv(fd, buffer, size, 0);
     }
-    return 1;
 }
 
 
-void send_tcp(TCP_Server* server, char* payload, size_t size){
-    send(server->clientfd,payload,size,0);
+void send_tcp(int fd, char* payload, size_t size){
+    send(fd,payload,size,0);
 }

@@ -8,7 +8,6 @@
 
 typedef struct TCP_Server{
     int sockfd;
-    int clientfd;
     struct sockaddr_in *server_addr;
     struct sockaddr_in *client_addr;
     uint addrlen;
@@ -20,9 +19,9 @@ void start_tcp(TCP_Server* server);
 
 int accept_tcp(TCP_Server* server);
 
-int recv_tcp(TCP_Server* server, char* buffer, size_t size);
+int recv_tcp(int fd, char* buffer, size_t size);
 
-void send_tcp(TCP_Server* server, char* payload, size_t size);
+void send_tcp(int fd, char* payload, size_t size);
 
 
 #endif
