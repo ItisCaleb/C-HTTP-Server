@@ -11,7 +11,7 @@
         {
             "label": "run",
             "type": "shell",
-            "command": "./out/main",
+            "command": "./out/server",
             "dependsOn": [
                 "build"
             ],

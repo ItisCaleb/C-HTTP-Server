@@ -2,7 +2,10 @@ CC = gcc
 CFLAGS = -O1 -g -Wall -pthread
 SRC = $(wildcard src/*.c)
 INCLUDE = src/server
-OUTPUT = out/main
+OUTPUT = out/server
 
-all: ${SRC}
+${OUTPUT}: ${SRC}
 	${CC} ${CFLAGS} -I ${INCLUDE} ${SRC} -o ${OUTPUT}
+
+valgrind: ${OUTPUT}
+	valgrind --leak-check=full ${OUTPUT}

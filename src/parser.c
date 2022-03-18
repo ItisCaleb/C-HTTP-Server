@@ -84,12 +84,15 @@ bool parse_headers(HTTP_Request *req, char* buffer, ParseStatus *s){
   if(len == -1) return false;
   char *line = calloc(1, REQUEST_LINE_MAX_LEN);
   strncpy(line,buffer,len);
-  char *name = line;
-  char *value = line;
+  char *name = NULL;
+  char *value = NULL;
   for(int i=0;i<len;i++){
     if(line[i]==':'){
       line[i]='\0';
-      value = &line[i+1];
+      name = malloc(strlen(line)+1);
+      strncpy(name, line, strlen(line)+1);
+      value = malloc(strlen(&line[i+1])+1);
+      strncpy(value, &line[i+1], strlen(&line[i+1])+1);
       break;
     }else if(line[i]==' '){
       free(line);
@@ -97,6 +100,9 @@ bool parse_headers(HTTP_Request *req, char* buffer, ParseStatus *s){
     }
   }
   free(line);
+  if(name == NULL || value == NULL){
+    return false;
+  }
   set_header(req->headers,name,value);
   return true;
 }

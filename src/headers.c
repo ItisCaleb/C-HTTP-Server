@@ -1,6 +1,7 @@
 #include <headers.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int headers_compare(const void *a, const void *b, void *udata) {
     const HTTP_Header *ha = a;
@@ -19,7 +20,16 @@ struct hashmap *create_headers() {
 }
 
 void set_header(struct hashmap *map, char *name, char *value) {
-  hashmap_set(map, &(HTTP_Header){.name = name, .value = value});
+
+  HTTP_Header *header = malloc(sizeof(HTTP_Header));
+
+  char *cvalue = malloc(strlen(value)+1);
+  strncpy(cvalue,value,strlen(value)+1);
+
+  header->name = name;
+  header->value = cvalue;
+
+  hashmap_set(map, header);
 }
 
 HTTP_Header *get_header(struct hashmap *map, char *name) {
