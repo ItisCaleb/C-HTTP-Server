@@ -57,21 +57,31 @@ static void handle_response(HTTP_Request *req, HTTP_Response *res,int clientfd)
 static void* handle_request(void* p){
   int clientfd = *(int*)p;
   char *buffer = calloc(1,MESSAGE_MAX_LEN);
+
+  //handle request
   while (recv_tcp(clientfd, buffer, MESSAGE_MAX_LEN)){
-     // do something
+
+    //init request and response struct
     HTTP_Request *req = create_request(buffer);
     HTTP_Response *res = create_response();
+
+    //if requset fail
     if(!req->_parse_ok){
       res_set_status(res,req->_status);
     }
+
+    //if request success then execute route
     if(req->_parse_ok && !execute_handler(SERVER->routes,req->path,req,res)){
       res_set_status(res,Not_Found);
     }
+
+    //send response then reset buffer
     handle_response(req, res, clientfd);
     bzero(buffer, MESSAGE_MAX_LEN);
     fflush(stdout);
   }
 
+  //close everything
   shutdown(clientfd, SHUT_WR);
   shutdown(clientfd, SHUT_RD);
   close(clientfd);

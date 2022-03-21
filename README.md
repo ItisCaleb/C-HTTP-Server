@@ -32,6 +32,6 @@ int main(int argc, char *argv[]){
     return 0;
 }
 ```
-Then type `make` in terminal
-The program will get compiled and output to `out`
-Then you can type `./out/main` to run it!
+Then type `make` in terminal<br>
+The program will get compiled and output to `out`<br>
+Then you can type `./out/server` to run it!
