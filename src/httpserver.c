@@ -77,6 +77,7 @@ static void* handle_request(void* p){
   close(clientfd);
   free(buffer);
   free(p);
+  pthread_detach(pthread_self());
   return NULL;
 }
 

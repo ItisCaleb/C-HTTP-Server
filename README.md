@@ -9,7 +9,7 @@ This is just a practice project
 - parse path query
 - ~~parse request headers~~(not sure if there are any bug)
 - ~~parse request data~~
-- ~~multi thread~~
+- ~~multithread~~
 - ~~more HTTP status code~~
 - route matching
 - HTTPS
@@ -26,9 +26,9 @@ void root(HTTP_Request* req, HTTP_Response* res){
 }
 
 int main(int argc, char *argv[]){
-    HTTP_Server* http = create_server(5000);
-    handle_route(http,"/",root);
-    start(http);
+    create_server(5000);
+    handle_route("/",root);
+    start();
     return 0;
 }
 ```
