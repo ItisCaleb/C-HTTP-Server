@@ -22,11 +22,11 @@ struct thread_arg
 
 HTTP_Server* create_server(unsigned short port);
 
-void handle_route(HTTP_Server* server, char* path, Request_Handler handler);
+void handle_route(char* path, Request_Handler handler);
 
-void handle_static(HTTP_Server* server, char* path);
+void handle_static(char* path);
 
-void start(HTTP_Server* server);
+void start();
 
 #endif
 

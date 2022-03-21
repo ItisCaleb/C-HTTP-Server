@@ -7,8 +7,8 @@ void root(HTTP_Request* req, HTTP_Response* res){
 }
 
 int main(int argc, char *argv[]){
-    HTTP_Server* http = create_server(5000);
-    handle_route(http,"/",root);
-    start(http);
+    create_server(5000);
+    handle_route("/",root);
+    start();
     return 0;
 }

@@ -133,7 +133,7 @@ HTTP_Response *create_response() {
   set_header(res->headers, "Server", "ItisCaleb/1.0");
   set_header(res->headers, "Date", time_str);
   set_header(res->headers, "Connection", "keep-alive");
-  set_header(res->headers, "Content-Type","text/plain");
+  set_header(res->headers, "Content-Type", "text/plain");
   free(time_str);
   return res;
 }

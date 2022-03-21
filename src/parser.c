@@ -104,6 +104,8 @@ bool parse_headers(HTTP_Request *req, char* buffer, ParseStatus *s){
     return false;
   }
   set_header(req->headers,name,value);
+  free(name);
+  free(value);
   return true;
 }
 

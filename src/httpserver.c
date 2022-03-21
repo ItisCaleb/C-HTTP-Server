@@ -3,7 +3,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <signal.h>
 
+HTTP_Server *SERVER;
 
 struct HTTP_Server *create_server(unsigned short port)
 {
@@ -11,12 +13,13 @@ struct HTTP_Server *create_server(unsigned short port)
   server->port = port;
   server->_tcp_server = create_tcp_server(port);
   server->routes = create_router();
+  SERVER = server;
   return server;
 }
 
-void handle_route(HTTP_Server *server, char *path, Request_Handler handler)
+void handle_route(char *path, Request_Handler handler)
 {
-  if (!server)
+  if (!SERVER)
   {
     printf("Error: Your server is NULL\n");
     exit(0);
@@ -31,10 +34,10 @@ void handle_route(HTTP_Server *server, char *path, Request_Handler handler)
     printf("Error: Your handler is NULL\n");
     exit(0);
   }
-  add_route(server->routes, path, handler);
+  add_route(SERVER->routes, path, handler);
 }
 
-static void handle_response(HTTP_Server *server,HTTP_Request *req, HTTP_Response *res,int clientfd)
+static void handle_response(HTTP_Request *req, HTTP_Response *res,int clientfd)
 {
   char *response = calloc(1, HEADER_MAX_LEN + res->data_len + 1);
   concat_headers(res, response);
@@ -52,54 +55,63 @@ static void handle_response(HTTP_Server *server,HTTP_Request *req, HTTP_Response
 }
 
 static void* handle_request(void* p){
-  struct thread_arg* arg = (struct thread_arg*)p;
+  int clientfd = *(int*)p;
   char *buffer = calloc(1,MESSAGE_MAX_LEN);
-  while (recv_tcp(arg->clientfd, buffer, MESSAGE_MAX_LEN)){
+  while (recv_tcp(clientfd, buffer, MESSAGE_MAX_LEN)){
      // do something
     HTTP_Request *req = create_request(buffer);
     HTTP_Response *res = create_response();
     if(!req->_parse_ok){
       res_set_status(res,req->_status);
     }
-    if(req->_parse_ok && !execute_handler(arg->server->routes,req->path,req,res)){
+    if(req->_parse_ok && !execute_handler(SERVER->routes,req->path,req,res)){
       res_set_status(res,Not_Found);
     }
-    handle_response(arg->server,req, res,arg->clientfd);
+    handle_response(req, res, clientfd);
     bzero(buffer, MESSAGE_MAX_LEN);
     fflush(stdout);
   }
-  shutdown(arg->clientfd, SHUT_WR);
-  shutdown(arg->clientfd, SHUT_RD);
-  close(arg->clientfd);
+
+  shutdown(clientfd, SHUT_WR);
+  shutdown(clientfd, SHUT_RD);
+  close(clientfd);
   free(buffer);
-  free(arg);
+  free(p);
   return NULL;
 }
 
-static void run_http(void *s){
-  HTTP_Server *server = s;
+static void run_http(){
+  HTTP_Server *server = SERVER;
   for (;;)
   {
     int clientfd =  accept_tcp(server->_tcp_server);
     if (clientfd != -1)
     {
       pthread_t t; // 宣告 pthread 變數
-      struct thread_arg *arg = calloc(1,sizeof(struct thread_arg));
-      arg->clientfd = clientfd;
-      arg->server = server;
-      pthread_create(&t, NULL, handle_request, arg);
+      int *fd = malloc(sizeof(int));
+      *fd = clientfd;
+      pthread_create(&t, NULL, handle_request, fd);
     }
   }
 }
 
-void start(HTTP_Server *server)
+void stop_server(int sig){
+  free(SERVER->_tcp_server->server_addr);
+  free(SERVER->_tcp_server->client_addr);
+  free(SERVER->_tcp_server);
+  hashmap_free(SERVER->routes);
+  exit(0);
+}
+
+void start()
 {
-  if (!server)
+  signal(SIGINT, stop_server);
+  if (!SERVER)
   {
     printf("Error: Your server is NULL\n");
     exit(0);
   }
-  start_tcp(server->_tcp_server);
-  run_http(server);
+  start_tcp(SERVER->_tcp_server);
+  run_http();
 }
 
