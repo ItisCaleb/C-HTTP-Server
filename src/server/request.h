@@ -31,14 +31,12 @@ typedef enum {
 
 extern const char* constants[];  
 
-
 typedef struct HTTP_Request{
     HTTP_method method;
     char *path;
     float HTTP_VERSION;
     struct hashmap *headers;
     char *data;
-    bool _parse_ok;
     HTTP_Status _status;
 } HTTP_Request;
 
@@ -46,7 +44,11 @@ HTTP_Request *create_request(char* buffer);
 
 HTTP_method req_get_method(HTTP_Request* req);
 
+float req_get_version(HTTP_Request* req);
+
 char* req_get_path(HTTP_Request* req);
+
+char* req_get_data(HTTP_Request* req);
 
 void free_request(HTTP_Request *req);
 

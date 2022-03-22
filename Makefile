@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O1 -g -Wall -pthread
+CFLAGS = -O2 -g -Wall -pthread
 SRC = $(wildcard src/*.c)
 INCLUDE = src/server
 OUTPUT = out/server

@@ -1,15 +1,15 @@
 #include <headers.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int headers_compare(const void *a, const void *b, void *udata) {
-    const HTTP_Header *ha = a;
-    const HTTP_Header *hb = b;
-    return strcmp(ha->name, hb->name);
+  const HTTP_Header *ha = a;
+  const HTTP_Header *hb = b;
+  return strcmp(ha->name, hb->name);
 }
 
-void headers_free(void *item){
+void headers_free(void *item) {
   HTTP_Header *header = item;
   free(header->name);
   free(header->value);
@@ -27,14 +27,15 @@ struct hashmap *create_headers() {
 
 void set_header(struct hashmap *map, char *name, char *value) {
 
-  char *cname = malloc(strlen(name)+1);
-  strncpy(cname,name,strlen(name)+1);
+  char *cname = malloc(strlen(name) + 1);
+  strncpy(cname, name, strlen(name) + 1);
 
-  char *cvalue = malloc(strlen(value)+1);
-  strncpy(cvalue,value,strlen(value)+1);
+  char *cvalue = malloc(strlen(value) + 1);
+  strncpy(cvalue, value, strlen(value) + 1);
 
-  HTTP_Header *prev = hashmap_set(map, &(HTTP_Header){.name=cname, .value=cvalue});
-  if(prev){
+  HTTP_Header *prev =
+      hashmap_set(map, &(HTTP_Header){.name = cname, .value = cvalue});
+  if (prev) {
     free(prev->name);
     free(prev->value);
   }
@@ -46,10 +47,8 @@ HTTP_Header *get_header(struct hashmap *map, char *name) {
 
 bool h_iter(const void *item, void *udata) {
   const HTTP_Header *header = item;
-  printf("%s:%s\n",header->name,header->value);
+  printf("%s:%s\n", header->name, header->value);
   return true;
 }
 
-void list_headers(struct hashmap* map){
-  hashmap_scan(map, h_iter, NULL);
-}
+void list_headers(struct hashmap *map) { hashmap_scan(map, h_iter, NULL); }

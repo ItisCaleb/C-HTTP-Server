@@ -6,10 +6,7 @@
 
 typedef void (*Request_Handler)(HTTP_Request* req, HTTP_Response* res);
 
-typedef struct HTTP_Route{
-    char* path;
-    Request_Handler handler;
-} HTTP_Route;
+typedef struct HTTP_Route HTTP_Route;
 
 struct hashmap* create_router();
 
