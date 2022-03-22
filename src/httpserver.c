@@ -16,7 +16,7 @@ HTTP_Server *SERVER = NULL;
 
 void create_server(unsigned short port) {
   if (SERVER) {
-    printf("Error: Your have already create a server!\n");
+    printf("Error: You have already create a server!\n");
     exit(0);
   }
   HTTP_Server *server = calloc(1, sizeof(HTTP_Server));
@@ -122,6 +122,7 @@ void stop_server(int sig) {
   free(SERVER->_tcp_server->client_addr);
   free(SERVER->_tcp_server);
   hashmap_free(SERVER->routes);
+  free(SERVER);
   exit(0);
 }
 
