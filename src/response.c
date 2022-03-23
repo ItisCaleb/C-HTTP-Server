@@ -93,8 +93,14 @@ void res_set_status(HTTP_Response *res, HTTP_Status status) {
 }
 
 void res_set_data(HTTP_Response *res, char *data) {
-  res->data = data;
-  res->data_len = strlen(data);
+  size_t len = strlen(data);
+  char *cdata = malloc(len+1);
+  strncpy(cdata, data, len+1);
+  if(res->data != NULL){
+    free(res->data);
+  }
+  res->data = cdata;
+  res->data_len = len;
 }
 
 void res_redirect(HTTP_Response *res, char *path) {
@@ -113,10 +119,11 @@ void res_set_html(HTTP_Response *res, char *file_path) {
   long fsize = ftell(ptr);
   fseek(ptr, 0, SEEK_SET); /* same as rewind(f); */
 
-  char *data = calloc(1, fsize + 1);
+  char *data = malloc(fsize + 1);
   fread(data, fsize, 1, ptr);
   fclose(ptr);
   res_set_data(res, data);
+  free(data);
 }
 
 HTTP_Response *create_response() {
