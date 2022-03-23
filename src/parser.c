@@ -90,10 +90,16 @@ bool parse_headers(HTTP_Request *req, char *buffer, ParseStatus *s) {
   for (int i = 0; i < len; i++) {
     if (line[i] == ':') {
       line[i] = '\0';
+
+      //copy name
       name = malloc(strlen(line) + 1);
       strncpy(name, line, strlen(line) + 1);
-      value = malloc(strlen(&line[i + 1]) + 1);
-      strncpy(value, &line[i + 1], strlen(&line[i + 1]) + 1);
+
+      //trim white and copy value
+      int k = i+1;
+      for(;(line[k] == ' ' || line[k] == '\t') && k < len; k++);
+      value = malloc(strlen(&line[k]) + 1);
+      strncpy(value, &line[k], strlen(&line[k]) + 1);
       break;
     } else if (line[i] == ' ') {
       free(line);
