@@ -59,6 +59,36 @@ static void handle_response(HTTP_Request *req, HTTP_Response *res,
   free_request(req);
 }
 
+void before_handler(HTTP_Request *req, HTTP_Response *res){
+  HTTP_Header *conn = get_header(req->headers, "Connection");
+  if(conn && strcmp(conn->value, "close") == 0){
+    set_header(res->headers, "Connection", "close");
+  }
+}
+
+
+void after_handler(HTTP_Request *req, HTTP_Response *res, bool *shoud_close){
+  if (status_code[res->status] >= 400) {
+      set_header(res->headers, "Connection", "close");
+      char *base_str;
+      char error_str[200] = {};
+      switch (status_code[res->status])
+      {
+      case 404:
+        base_str = "Light Warrior! There's nothing you can %s at %s !";
+        sprintf(error_str, base_str, req_get_method(req), req_get_path(req));
+        res_set_data(res, error_str);
+        break;
+      default:
+        break;
+      }
+  }
+  HTTP_Header *conn = get_header(req->headers, "Connection");
+  if(conn && strcmp(conn->value, "close") == 0){
+    *shoud_close = true;
+  }
+}
+
 static void *handle_request(void *p) {
   int clientfd = *(int *)p;
   char *buffer = calloc(1, MESSAGE_MAX_LEN);
@@ -70,20 +100,14 @@ static void *handle_request(void *p) {
     HTTP_Request *req = create_request(buffer);
     HTTP_Response *res = create_response();
 
-    // check if parse fail
-    if (req->_status != OK) {
-      set_header(res->headers, "Connection", "close");
+    before_handler(req, res);
+    // check if parse fail or not found matching route handler
+    if (req->_status != OK || !execute_handler(SERVER->routes, req->path, req, res)) {
       res_set_status(res, req->_status);
-    } else if (!execute_handler(SERVER->routes, req->path, req, res)) {
-      set_header(res->headers, "Connection", "close");
-      res_set_status(res, Not_Found);
     }
     bool close_conn = false;
+    after_handler(req, res , &close_conn);
 
-    // check if connection close
-    if (strcmp(get_header(res->headers, "Connection")->value, "close") == 0) {
-      close_conn = true;
-    }
     // send response then reset buffer
     handle_response(req, res, clientfd);
     bzero(buffer, MESSAGE_MAX_LEN);

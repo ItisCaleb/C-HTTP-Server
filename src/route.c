@@ -30,6 +30,7 @@ bool execute_handler(struct hashmap *routes, char *path, HTTP_Request *req,
                      HTTP_Response *res) {
   HTTP_Route *route = hashmap_get(routes, &(HTTP_Route){.path = path});
   if (route == NULL) {
+    req->_status = Not_Found;
     return false;
   } else {
     route->handler(req, res);
