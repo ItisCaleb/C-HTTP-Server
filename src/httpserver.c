@@ -83,7 +83,7 @@ void after_handler(HTTP_Request *req, HTTP_Response *res, bool *shoud_close){
         break;
       }
   }
-  HTTP_Header *conn = get_header(req->headers, "Connection");
+  HTTP_Header *conn = get_header(res->headers, "Connection");
   if(conn && strcmp(conn->value, "close") == 0){
     *shoud_close = true;
   }
@@ -112,7 +112,6 @@ static void *handle_request(void *p) {
     handle_response(req, res, clientfd);
     bzero(buffer, MESSAGE_MAX_LEN);
     fflush(stdout);
-
     if (close_conn) {
       break;
     }
