@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *constants[] = {methods};
+char *constants[] = {methods};
 
 HTTP_method str2enum(char *name) {
   int i;

@@ -29,7 +29,7 @@ typedef enum {
 #define METHOD(name, value) \
     #name,
 
-extern const char* constants[];  
+extern char* constants[];  
 
 typedef struct HTTP_Request{
     HTTP_method method;
@@ -42,7 +42,7 @@ typedef struct HTTP_Request{
 
 HTTP_Request *create_request(char* buffer);
 
-HTTP_method req_get_method(HTTP_Request* req);
+char* req_get_method(HTTP_Request* req);
 
 float req_get_version(HTTP_Request* req);
 

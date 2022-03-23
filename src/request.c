@@ -13,12 +13,12 @@ HTTP_Request *create_request(char *buffer) {
   return req;
 }
 
-HTTP_method req_get_method(HTTP_Request *req) {
+char* req_get_method(HTTP_Request *req) {
   if (!req) {
     printf("You can't pass NULL request!");
     return 0;
   }
-  return req->method;
+  return constants[req->method];
 }
 
 float req_get_version(HTTP_Request *req) {
