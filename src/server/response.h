@@ -62,6 +62,8 @@ void res_set_data(HTTP_Response* res, char* data);
 
 void res_set_html(HTTP_Response* res, char* file_path);
 
+void res_set_file(HTTP_Response* res, char* file_path, char* type);
+
 void res_redirect(HTTP_Response* res, char* path);
 
 void concat_headers(HTTP_Response* res,char* header_str);

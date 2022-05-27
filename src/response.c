@@ -126,6 +126,24 @@ void res_set_html(HTTP_Response *res, char *file_path) {
   free(data);
 }
 
+void res_set_file(HTTP_Response* res, char* file_path, char* type){
+  FILE *ptr = fopen(file_path, "r");
+  if (!ptr) {
+    printf("Can't open file at %s\n", file_path);
+    return;
+  }
+  set_header(res->headers, "Content-Type", "image/gif");
+  fseek(ptr, 0, SEEK_END);
+  long fsize = ftell(ptr);
+  fseek(ptr, 0, SEEK_SET); /* same as rewind(f); */
+
+  char *data = malloc(fsize + 1);
+  fread(data, fsize, 1, ptr);
+  fclose(ptr);
+  res_set_data(res, data);
+  free(data);
+}
+
 HTTP_Response *create_response() {
   HTTP_Response *res = calloc(1, sizeof(HTTP_Response));
   res->HTTP_VERSION = 1.1;

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <path.h>
 
 char *constants[] = {methods};
 
@@ -55,6 +56,8 @@ bool parse_first_line(HTTP_Request *req, char *buffer) {
     return false;
   }
   strcpy(req->path, p);
+  normalize(req->path);
+  fflush(stdout);
 
   // get version
   p = strtok(NULL, " ");
