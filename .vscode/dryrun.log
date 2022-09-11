@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/itiscaleb/Project/C-HTTP-Server'
+gcc -O2 -g -Wall -pthread -I src/server src/hashmap.c src/headers.c src/httpserver.c src/main.c src/parser.c src/path.c src/request.c src/response.c src/route.c src/stack.c src/tcpserver.c -o out/server
+make: Leaving directory `/Users/itiscaleb/Project/C-HTTP-Server'
+ 

@@ -12,7 +12,8 @@
                 "path": [
                     "${workspaceFolder}/src/server"
                 ]
-            }
+            },
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4

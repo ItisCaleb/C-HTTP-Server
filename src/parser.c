@@ -40,7 +40,8 @@ bool parse_first_line(HTTP_Request *req, char *buffer) {
   strncpy(sline, buffer, len);
 
   // get method
-  char *p = strtok(sline, " ");
+  char *tmp_p = NULL;
+  char *p = strtok_r(sline, " ", &tmp_p);
   req->method = str2enum(p);
   if (req->method == -1) {
     free(sline);
@@ -49,23 +50,32 @@ bool parse_first_line(HTTP_Request *req, char *buffer) {
   }
 
   // get path
-  p = strtok(NULL, " ");
+  p = strtok_r(NULL, " ", &tmp_p);
   if (p == NULL || p[0] != '/') {
     free(sline);
     req->_status = Bad_Request;
     return false;
   }
   strcpy(req->path, p);
-  normalize(req->path);
+  //normalize path
+  req->path = normalize(req->path);
+  if(req->path == NULL){
+    free(sline);
+    req->_status = Bad_Request;
+    return false;
+  }
+  printf("%s\n",req->path);
   fflush(stdout);
 
+
   // get version
-  p = strtok(NULL, " ");
+  p = strtok_r(NULL, " ", &tmp_p);
   if (p == NULL || strncmp(p, "HTTP/", 5) != 0) {
     free(sline);
     req->_status = Bad_Request;
     return false;
   }
+
   char ver[3] = {};
   strncpy(ver, p + 5, 3);
   req->HTTP_VERSION = atof(ver);

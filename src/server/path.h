@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-bool normalize(char* path);
+char* normalize(char* path);
 
-bool http_decode(char* path);
+char* http_decode(char* path);
 
-bool remove_dot(char* path);
+char* remove_dot(char* path);
 
 #endif
