@@ -61,3 +61,14 @@ char* remove_dot(char* path){
     stack_free(st);
     return new_path;
 }
+
+char* get_params(char* path){
+    char* tmp_p = NULL;
+    strtok_r(path, "?", &tmp_p);
+    if(tmp_p == NULL){
+        return NULL;
+    }
+    char* params = malloc(strlen(tmp_p)+1);
+    strcpy(params,tmp_p);
+    return params;
+}

@@ -36,6 +36,7 @@ typedef struct HTTP_Request{
     char *path;
     float HTTP_VERSION;
     struct hashmap *headers;
+    char *params;
     char *data;
     HTTP_Status _status;
 } HTTP_Request;

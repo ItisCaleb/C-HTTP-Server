@@ -64,6 +64,7 @@ bool parse_first_line(HTTP_Request *req, char *buffer) {
     req->_status = Bad_Request;
     return false;
   }
+  req->params = get_params(req->path);
   printf("%s\n",req->path);
   fflush(stdout);
 

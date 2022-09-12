@@ -11,8 +11,8 @@ This is just a practice project
 - ~~parse request data~~
 - ~~multithread~~
 - ~~more HTTP status code~~
-- route matching
 - HTTPS
+- route matching
 - middleware
 - static directory
 

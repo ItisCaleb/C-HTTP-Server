@@ -9,4 +9,6 @@ char* http_decode(char* path);
 
 char* remove_dot(char* path);
 
+char* get_params(char* path);
+
 #endif
